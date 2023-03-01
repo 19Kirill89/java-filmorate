@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class User {
     private long id;
     @NotBlank(message = "Указать почту обязательно")
-    @Email(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+    @Email(regexp = "\\w+@\\w+\\.(ru|com)",
             message = "Email должен быть правильным")
     private String email;
     private String name;
