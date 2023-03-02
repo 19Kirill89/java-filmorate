@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exeption.ControllersExeption;
-
-
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.util.List;
