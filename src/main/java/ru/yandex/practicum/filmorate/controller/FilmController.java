@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.ControllersExeption;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -40,7 +41,8 @@ public class FilmController {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String validationError(final ValidationException e) {
-        return "Ошибка валидации создания или добавление фильма: " + e.getMessage();
+        return "Ошибка: " + e.getMessage();
     }
 }
