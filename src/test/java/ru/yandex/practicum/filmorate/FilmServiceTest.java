@@ -3,20 +3,21 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exeption.ControllersExeption;
+import ru.yandex.practicum.filmorate.service.FilmService;
+
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.util.List;
 
 
 class FilmControllerTest {
-    private FilmController filmController;
+    private FilmService filmService;
 
     @BeforeEach
     public void filmControllerInit() {
-        filmController = new FilmController();
+        filmService = new FilmService();
     }
 
     @Test
@@ -35,8 +36,8 @@ class FilmControllerTest {
                 .build();
         System.out.println();
 
-        Assertions.assertThrows(ValidationException.class, () -> filmController.addFilm(film1));
-        Assertions.assertDoesNotThrow(() -> filmController.addFilm(film2));
+        Assertions.assertThrows(ValidationException.class, () -> filmService.addFilm(film1));
+        Assertions.assertDoesNotThrow(() -> filmService.addFilm(film2));
     }
 
     @Test
@@ -54,12 +55,12 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.of(1999, 2, 1))
                 .build();
 
-        filmController.addFilm(film1);
-        filmController.addFilm(film2);
+        filmService.addFilm(film1);
+        filmService.addFilm(film2);
         film2.setName("проект Атомное сердце");
-        filmController.updateFilm(film2);
+        filmService.updateFilm(film2);
         List<Film> expected = List.of(film1, film2);
-        List<Film> actual = filmController.allFilms();
+        List<Film> actual = filmService.allFilms();
         Assertions.assertEquals(expected, actual);
     }
 }

@@ -1,55 +1,46 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.ControllersExeption;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final HashMap<Long, Film> filmHashMap = new HashMap<>();
-    private long idCounter;
-    private final LocalDate FIRST_FILM_RELEASE_DATE = (LocalDate.of(1895, 12, 28));
+    private final FilmService filmService;
 
-    @GetMapping
-    public List<Film> allFilms() {
-        return new ArrayList<>(filmHashMap.values());
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
+    @GetMapping
+    public List<Film> getFilms() {
+        return filmService.allFilms();
+    }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
-        validateReleaseDate(film);
-        film.setId(++idCounter);
-        filmHashMap.put(film.getId(), film);
-        log.debug("POST запрос на добавление нового фильма - готово");
-        return film;
+        log.info("Получен запрос на добавление фильма: {}", film.getName());
+        return filmService.addFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) throws ControllersExeption {
-        validateReleaseDate(film);
-        if (!filmHashMap.containsKey(film.getId())) {
-            throw new ControllersExeption("нет фильма с ID " + film.getId());
-        } else {
-            filmHashMap.put(film.getId(), film);
-            log.debug("PUT запрос: фильм обновлен");
-        }
-        return film;
+    Film updateFilm(@Valid @RequestBody Film film) throws ControllersExeption {
+        log.info("Получен запрос на обновление информации фильма: {}", film.getName());
+        return filmService.updateFilm(film);
     }
 
-    private void validateReleaseDate(Film film) {
-        if (film.getReleaseDate().isBefore(FIRST_FILM_RELEASE_DATE)) {
-            throw new ValidationException("Ошибка даты: исправьте дату релиза фильма, начало отсчета :" +
-                    FIRST_FILM_RELEASE_DATE);
-        }
+    @ExceptionHandler
+    public String validationError(final ValidationException e) {
+        return "Ошибка валидации создания или добавление фильма: " + e.getMessage();
     }
 }
