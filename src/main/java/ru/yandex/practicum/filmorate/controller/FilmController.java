@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.ControllersExeption;
+import ru.yandex.practicum.filmorate.exeption.ControllersException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -25,7 +25,7 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getFilms() {
-        return filmService.allFilms();
+        return filmService.getAllFilms();
     }
 
     @PostMapping
@@ -35,7 +35,7 @@ public class FilmController {
     }
 
     @PutMapping
-    Film updateFilm(@Valid @RequestBody Film film) throws ControllersExeption {
+    Film updateFilm(@Valid @RequestBody Film film) throws ControllersException {
         log.info("Получен запрос на обновление информации фильма: {}", film.getName());
         return filmService.updateFilm(film);
     }

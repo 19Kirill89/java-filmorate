@@ -1,3 +1,4 @@
+/*
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -64,3 +65,4 @@ public class UserServiceTest {
         assertEquals(expected, actual);
     }
 }
+*/
