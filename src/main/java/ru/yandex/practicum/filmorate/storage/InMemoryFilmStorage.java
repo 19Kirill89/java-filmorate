@@ -2,15 +2,18 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.ControllersException;
+import ru.yandex.practicum.filmorate.exeption.NotFound;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final HashMap<Long, Film> filmHashMap = new HashMap<>();
+    private final Map<Long, Film> filmHashMap = new HashMap<>();
     private long idCounter;
 
     @Override
@@ -33,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilmById(Long id) {
         if (!filmHashMap.containsKey(id)) {
-            throw new ControllersException("нет фильма с id: " + id);
+            throw new NotFound("нет фильма с id: " + id);
         } else {
             return filmHashMap.get(id);
         }
@@ -41,11 +44,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        if (filmHashMap.isEmpty()) {
-            throw new ControllersException("в данный момент фильмов нет");
-        } else {
-            return (List<Film>) filmHashMap.values();
-        }
+        return new ArrayList<>(filmHashMap.values());
     }
 
     @Override
