@@ -39,17 +39,17 @@ public class UserService {
         inMemoryUserStorage.deleteAllUser();
     }
 
-    public User getUserById(long id) throws ControllersException {
+    public User getUserById(long id) throws NotFound {
         return inMemoryUserStorage.getUserById(id);
     }
 
     public User addFriends(Long userId, Long friendId) throws NotFound {
         final User user = inMemoryUserStorage.getUserById(userId);
         final User friend = inMemoryUserStorage.getUserById(friendId);
-        if (user == null) {
+        if (friend.getId() < 0 || friend.getId() != friendId) {
+            throw new NotFound("отрицательное число id: " + friendId);
+        } else if (user == null) {
             throw new NotFound("нет пользователя с id " + userId);
-        } else if (friend == null) {
-            throw new NotFound("нет пользователя с id " + friendId);
         } else {
             user.getFriends().add(friendId);
             friend.getFriends().add(userId);

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.ControllersException;
 import ru.yandex.practicum.filmorate.exeption.ErrorResponse;
@@ -32,27 +33,22 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable Integer id) throws NotFound {
-        log.debug("GET film");
         return filmService.filmById(id);
     }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.info("Получен запрос на добавление фильма: {}", film.getName());
         return filmService.addFilm(film);
     }
 
     @PutMapping
     Film updateFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.info("Получен запрос на обновление информации фильма: {}", film.getName());
         return filmService.updateFilm(film);
     }
 
-    @PutMapping("/films/{id}/like/{userId}")
-    public Film addLike(@PathVariable long filmId, @PathVariable long userId)
-            throws NotFound, NotFound {
-        log.debug("PUT запрос на добавление лайка фильму с  id = {} от пользователя id = {}", filmId, userId);
-        return filmService.addLikeToFilm(filmId, userId);
+    @PutMapping("/{id}/like/{userId}")
+    public void putLike(@PathVariable Integer id, @PathVariable Integer userId) throws NotFound {
+        filmService.addLikeToFilm(id, userId);
     }
 
     @DeleteMapping("{id}/like/{userId}")
@@ -64,33 +60,7 @@ public class FilmController {
 
     @GetMapping("/popular")
     public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") String count) {
-        log.debug("GET 10 популярных кинчиков");
         int intCount = Integer.parseInt(count);
         return filmService.getTopFilms(intCount);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFound(final NotFound e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleFilmNotFound(final NotFound e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleServerError(final ControllersException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public String negative(final ControllersException e) {
-//        return e.getMessage();
-//    }
-
 }

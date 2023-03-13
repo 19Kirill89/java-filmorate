@@ -35,26 +35,26 @@ public class FilmService {
 
     public Film addFilm(Film film) throws ValidationException {
         validateReleaseDate(film);
-        log.debug("POST запрос на добавление нового фильма - готово");
+        log.debug("Получен запрос на добавление фильма: {}", film.getName());
         return inMemoryFilmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) throws ControllersException {
         validateReleaseDate(film);
-        log.debug("PUT запрос: фильм обновлен");
+        log.info("Получен запрос на обновление информации фильма: {}", film.getName());
         return inMemoryFilmStorage.updateFilmInfo(film);
     }
 
     public void deleteAllFilms() {
-        log.info("все фильмы удалены");
         inMemoryFilmStorage.deleteAllFilms();
     }
 
-    public Film filmById(long id) {
+    public Film filmById(long id) throws NotFound {
+        log.debug("GET film");
         return inMemoryFilmStorage.getFilmById(id);
     }
 
-    public Film addLikeToFilm(long filmId, long userId) {
+    public void addLikeToFilm(long filmId, long userId) {
         Film film = inMemoryFilmStorage.getFilmById(filmId);
         User user = inMemoryUserStorage.getUserById(userId);
         if (user == null) {
@@ -62,8 +62,7 @@ public class FilmService {
         } else if (film == null) {
             throw new NotFound("нет фильма с id: " + filmId);
         } else {
-            film.getLikes().add(userId);
-            return inMemoryFilmStorage.updateFilmInfo(film);
+            inMemoryFilmStorage.getFilmById(filmId).getLikes().add(userId);
         }
     }
 
@@ -75,14 +74,16 @@ public class FilmService {
         } else if (film == null) {
             throw new NotFound("нет фильма с id: " + filmId);
         } else {
-            film.getLikes().remove(userId);
+            log.debug("удален лайк");
+            inMemoryFilmStorage.getFilmById(filmId).getLikes().add(userId);
             inMemoryFilmStorage.updateFilmInfo(film);
         }
     }
 
     public List<Film> getTopFilms(Integer count) {
+        log.debug("GET 10 популярных кинчиков");
         return inMemoryFilmStorage.getAllFilms().stream()
-                .sorted((f1,f2) -> f2.getLikes().size() - f1.getLikes().size())
+                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(count)
                 .collect(Collectors.toList());
     }

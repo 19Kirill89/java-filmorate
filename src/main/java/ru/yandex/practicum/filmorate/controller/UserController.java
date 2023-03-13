@@ -72,23 +72,4 @@ public class UserController {
         log.debug("GET запрос на получение списка дружков которые друзья пользователя");
         return userService.getCommonFriendsList(userId, otherUserId);
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFound(final NotFound e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleServerError(final RuntimeException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String negative(final ValidationException e) {
-        return e.getMessage();
-    }
-
 }

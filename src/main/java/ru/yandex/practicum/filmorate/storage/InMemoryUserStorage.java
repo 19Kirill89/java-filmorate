@@ -51,10 +51,10 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User getUserById(long id) {
         if (!userHashMap.containsKey(id)) {
-            throw new NotFound("нет пользователя с id: " + id);
-        } else {
-            return userHashMap.get(id);
+            log.debug("запрос по id пользовател: " + id);
+            throw new NotFound("нет пользователя id: " + id);
         }
+        return userHashMap.get(id);
     }
 
     @Override
