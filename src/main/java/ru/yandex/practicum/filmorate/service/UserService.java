@@ -18,7 +18,6 @@ import java.util.Set;
 public class UserService {
     private final InMemoryUserStorage inMemoryUserStorage;
 
-
     public UserService(InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryUserStorage = inMemoryUserStorage;
     }

@@ -1,4 +1,3 @@
-/*
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +52,7 @@ public class UserStorageTest {
         user2.setLogin("ПЧ-9");
         user2.setBirthday(LocalDate.of(1956, 10, 12));
 
+
         inMemoryUserStorage.createUser(user1);
         inMemoryUserStorage.createUser(user2);
         user1.setName(userNameTest);
@@ -63,4 +63,3 @@ public class UserStorageTest {
         assertEquals(expected, actual);
     }
 }
-*/

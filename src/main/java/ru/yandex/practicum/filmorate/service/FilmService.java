@@ -64,7 +64,7 @@ public class FilmService {
         User user = inMemoryUserStorage.getUserById(userId);
         if (user.getId() < 0) {
             throw new NotFound("нет пользователя с id: " + userId);
-        } else if (film.getId() < 0 ) {
+        } else if (film.getId() < 0) {
             throw new NotFound("нет фильма с id: " + filmId);
         } else {
             log.debug("удален лайк");
@@ -72,20 +72,6 @@ public class FilmService {
             inMemoryFilmStorage.updateFilmInfo(film);
         }
     }
-
-
-   /* public void putLike(Integer id, Integer userId) {
-        if (!userStorage.containsUserId(userId)){
-            throw new NotFoundException("User does not exist");
-        }
-        filmStorage.getFilm(id).getLikes().add(userId);
-    }
-    public void deleteLike(Integer id, Integer userId) {
-        if (!userStorage.containsUserId(userId)){
-            throw new NotFoundException("User does not exist");
-        }
-        filmStorage.getFilm(id).getLikes().remove(userId);
-    }*/
 
     public List<Film> getTopFilms(Integer count) {
         log.debug("GET 10 популярных кинчиков");
