@@ -1,50 +1,84 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exeption.ControllersExeption;
+import ru.yandex.practicum.filmorate.exeption.NotFound;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import javax.validation.ValidationException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FilmService {
-    private final HashMap<Long, Film> filmHashMap = new HashMap<>();
-    private long idCounter;
-    private final LocalDate FIRST_FILM_RELEASE_DATE = (LocalDate.of(1895, 12, 28));
+    private final InMemoryFilmStorage inMemoryFilmStorage;
+    private final InMemoryUserStorage inMemoryUserStorage;
 
-    public List<Film> allFilms() {
-        return new ArrayList<>(filmHashMap.values());
+    @Autowired
+    public FilmService(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
+        this.inMemoryFilmStorage = inMemoryFilmStorage;
+        this.inMemoryUserStorage = inMemoryUserStorage;
     }
 
-    public Film addFilm(Film film) throws ValidationException {
-        validateReleaseDate(film);
-        film.setId(++idCounter);
-        filmHashMap.put(film.getId(), film);
-        log.debug("POST запрос на добавление нового фильма - готово");
-        return film;
+    public List<Film> getAllFilms() {
+        return inMemoryFilmStorage.getAllFilms();
     }
 
-    public Film updateFilm(Film film) throws ControllersExeption {
-        validateReleaseDate(film);
-        if (!filmHashMap.containsKey(film.getId())) {
-            throw new ControllersExeption("нет фильма с ID " + film.getId());
+    public Film addFilm(Film film) {
+        log.debug("Получен запрос на добавление фильма: {}", film.getName());
+        return inMemoryFilmStorage.createFilm(film);
+    }
+
+    public Film updateFilm(Film film) {
+        log.info("Получен запрос на обновление информации фильма: {}", film.getName());
+        return inMemoryFilmStorage.updateFilmInfo(film);
+    }
+
+    public void deleteAllFilms() {
+        inMemoryFilmStorage.deleteAllFilms();
+    }
+
+    public Film filmById(long id) throws NotFound {
+        log.debug("GET film");
+        return inMemoryFilmStorage.getFilmById(id);
+    }
+
+    public void addLikeToFilm(long filmId, long userId) {
+        Film film = inMemoryFilmStorage.getFilmById(filmId);
+        User user = inMemoryUserStorage.getUserById(userId);
+        if (user == null) {
+            throw new NotFound("нет пользователя с id: " + userId);
+        } else if (film == null) {
+            throw new NotFound("нет фильма с id: " + filmId);
         } else {
-            filmHashMap.put(film.getId(), film);
-            log.debug("PUT запрос: фильм обновлен");
+            inMemoryFilmStorage.getFilmById(filmId).getLikes().add(userId);
         }
-        return film;
     }
 
-    private void validateReleaseDate(Film film) {
-        if (film.getReleaseDate().isBefore(FIRST_FILM_RELEASE_DATE)) {
-            throw new ValidationException("Ошибка даты: исправьте дату релиза фильма, начало отсчета :" +
-                    FIRST_FILM_RELEASE_DATE);
+    public void deleteFilmLikes(long filmId, long userId) {
+        Film film = inMemoryFilmStorage.getFilmById(filmId);
+        User user = inMemoryUserStorage.getUserById(userId);
+        if (user.getId() < 0) {
+            throw new NotFound("нет пользователя с id: " + userId);
+        } else if (film.getId() < 0) {
+            throw new NotFound("нет фильма с id: " + filmId);
+        } else {
+            log.debug("удален лайк");
+            inMemoryFilmStorage.getFilmById(filmId).getLikes().remove(userId);
+            inMemoryFilmStorage.updateFilmInfo(film);
         }
+    }
+
+    public List<Film> getTopFilms(Integer count) {
+        log.debug("GET 10 популярных кинчиков");
+        return inMemoryFilmStorage.getAllFilms().stream()
+                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }
+
