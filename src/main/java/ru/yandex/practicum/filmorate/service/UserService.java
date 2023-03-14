@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exeption.ControllersException;
 import ru.yandex.practicum.filmorate.exeption.NotFound;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
@@ -18,7 +18,7 @@ import java.util.Set;
 public class UserService {
     private final InMemoryUserStorage inMemoryUserStorage;
 
-    @Autowired
+
     public UserService(InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryUserStorage = inMemoryUserStorage;
     }
@@ -46,7 +46,7 @@ public class UserService {
     public User addFriends(Long userId, Long friendId) throws NotFound {
         final User user = inMemoryUserStorage.getUserById(userId);
         final User friend = inMemoryUserStorage.getUserById(friendId);
-        if (friend.getId() < 0 || friend.getId() != friendId) {
+        if (friend.getId() < 0 ) {
             throw new NotFound("отрицательное число id: " + friendId);
         } else if (user == null) {
             throw new NotFound("нет пользователя с id " + userId);
