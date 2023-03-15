@@ -2,9 +2,8 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.ControllersExeption;
+import ru.yandex.practicum.filmorate.exeption.NotFound;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -38,9 +37,35 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String negative(final ControllersExeption e) {
-        return "Ошибка: " + e.getMessage();
+    @GetMapping("/{userId}")
+    public User getById(@PathVariable long userId) throws NotFound {
+        return userService.getUserById(userId);
+    }
+
+    @PutMapping("/{userId}/friends/{friendId}")
+    public User addToFriends(@Valid @PathVariable long userId, @Valid @PathVariable long friendId)
+            throws NotFound {
+        log.debug("PUT запрос на добавление друга к пользователю id ={} друга id={}", userId, friendId);
+        return userService.addFriends(userId, friendId);
+    }
+
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public User deleteFromFriends(@PathVariable long userId, @PathVariable long friendId) throws NotFound {
+        log.debug("DELETE запрос на удаление из друзей пользователя с id = {} у пользователя c id = {}",
+                friendId, userId);
+        return userService.deleteFriends(userId, friendId);
+    }
+
+    @GetMapping("/{userId}/friends")
+    public List<User> getFriendsForUser(@PathVariable long userId) throws NotFound {
+        log.debug("GET запрос на получение списка дружков");
+        return userService.getFriendsList(userId);
+    }
+
+    @GetMapping("/{userId}/friends/common/{otherUserId}")
+    public List<User> getCommonFriends(@PathVariable long userId, @PathVariable long otherUserId)
+            throws NotFound {
+        log.debug("GET запрос на получение списка дружков которые друзья пользователя");
+        return userService.getCommonFriendsList(userId, otherUserId);
     }
 }
