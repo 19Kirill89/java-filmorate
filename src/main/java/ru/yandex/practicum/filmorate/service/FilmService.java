@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-
-    @Autowired
-    public FilmService(FilmStorage inMemoryFilmStorage, InMemoryUserStorage userStorage) {
-        this.filmStorage = inMemoryFilmStorage;
-        this.userStorage = userStorage;
-    }
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
@@ -51,9 +47,9 @@ public class FilmService {
     public void addLikeToFilm(long filmId, long userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userStorage.getUserById(userId);
-        if (user == null) {
+        if (user == null || user.getId() < 0) {
             throw new NotFound("нет пользователя с id: " + userId);
-        } else if (film == null) {
+        } else if (film == null || film.getId() < 0) {
             throw new NotFound("нет фильма с id: " + filmId);
         } else {
             filmStorage.getFilmById(filmId).getLikes().add(userId);
@@ -63,9 +59,9 @@ public class FilmService {
     public void deleteFilmLikes(long filmId, long userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userStorage.getUserById(userId);
-        if (user.getId() < 0) {
+        if (user == null || user.getId() < 0) {
             throw new NotFound("нет пользователя с id: " + userId);
-        } else if (film.getId() < 0) {
+        } else if (film == null || film.getId() < 0) {
             throw new NotFound("нет фильма с id: " + filmId);
         } else {
             log.debug("удален лайк");

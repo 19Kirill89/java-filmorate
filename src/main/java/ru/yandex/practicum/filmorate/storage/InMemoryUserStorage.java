@@ -44,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getAllUser() {
-        log.info("удалены все пользователи");
+        log.info("получен список пользователей");
         return new ArrayList<>(userHashMap.values());
     }
 

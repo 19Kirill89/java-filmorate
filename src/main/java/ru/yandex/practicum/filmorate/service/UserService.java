@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.NotFound;
@@ -44,9 +45,9 @@ public class UserService {
     public User addFriends(Long userId, Long friendId) throws NotFound {
         final User user = userStorage.getUserById(userId);
         final User friend = userStorage.getUserById(friendId);
-        if (friend.getId() < 0 ) {
+        if (friend == null || friend.getId() < 0) {
             throw new NotFound("отрицательное число id: " + friendId);
-        } else if (user == null) {
+        } else if (user == null || user.getId() < 0) {
             throw new NotFound("нет пользователя с id " + userId);
         } else {
             user.getFriends().add(friendId);
@@ -59,9 +60,9 @@ public class UserService {
     public User deleteFriends(Long userId, Long friendId) throws NotFound {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        if (user == null) {
+        if (user == null || user.getId() < 0) {
             throw new NotFound("нет пользователя с id " + userId);
-        } else if (friend == null) {
+        } else if (friend == null || friend.getId() < 0) {
             throw new NotFound("нет пользователя с id " + friendId);
         } else {
             user.getFriends().remove(friendId);
@@ -73,7 +74,7 @@ public class UserService {
 
     public List<User> getFriendsList(Long userId) throws NotFound {
         User user = userStorage.getUserById(userId);
-        if (user == null) {
+        if (user == null || user.getId() < 0) {
             throw new NotFound("Пользователя с id" + userId + " не существует");
         } else {
             List<User> friendsList = new ArrayList<>();
