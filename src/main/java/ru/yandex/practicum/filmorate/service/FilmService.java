@@ -6,8 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.NotFound;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,67 +16,67 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FilmService {
-    private final InMemoryFilmStorage inMemoryFilmStorage;
-    private final InMemoryUserStorage inMemoryUserStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public FilmService(FilmStorage inMemoryFilmStorage, InMemoryUserStorage userStorage) {
+        this.filmStorage = inMemoryFilmStorage;
+        this.userStorage = userStorage;
     }
 
     public List<Film> getAllFilms() {
-        return inMemoryFilmStorage.getAllFilms();
+        return filmStorage.getAllFilms();
     }
 
     public Film addFilm(Film film) {
         log.debug("Получен запрос на добавление фильма: {}", film.getName());
-        return inMemoryFilmStorage.createFilm(film);
+        return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
         log.info("Получен запрос на обновление информации фильма: {}", film.getName());
-        return inMemoryFilmStorage.updateFilmInfo(film);
+        return filmStorage.updateFilmInfo(film);
     }
 
     public void deleteAllFilms() {
-        inMemoryFilmStorage.deleteAllFilms();
+        filmStorage.deleteAllFilms();
     }
 
     public Film filmById(long id) throws NotFound {
         log.debug("GET film");
-        return inMemoryFilmStorage.getFilmById(id);
+        return filmStorage.getFilmById(id);
     }
 
     public void addLikeToFilm(long filmId, long userId) {
-        Film film = inMemoryFilmStorage.getFilmById(filmId);
-        User user = inMemoryUserStorage.getUserById(userId);
+        Film film = filmStorage.getFilmById(filmId);
+        User user = userStorage.getUserById(userId);
         if (user == null) {
             throw new NotFound("нет пользователя с id: " + userId);
         } else if (film == null) {
             throw new NotFound("нет фильма с id: " + filmId);
         } else {
-            inMemoryFilmStorage.getFilmById(filmId).getLikes().add(userId);
+            filmStorage.getFilmById(filmId).getLikes().add(userId);
         }
     }
 
     public void deleteFilmLikes(long filmId, long userId) {
-        Film film = inMemoryFilmStorage.getFilmById(filmId);
-        User user = inMemoryUserStorage.getUserById(userId);
+        Film film = filmStorage.getFilmById(filmId);
+        User user = userStorage.getUserById(userId);
         if (user.getId() < 0) {
             throw new NotFound("нет пользователя с id: " + userId);
         } else if (film.getId() < 0) {
             throw new NotFound("нет фильма с id: " + filmId);
         } else {
             log.debug("удален лайк");
-            inMemoryFilmStorage.getFilmById(filmId).getLikes().remove(userId);
-            inMemoryFilmStorage.updateFilmInfo(film);
+            filmStorage.getFilmById(filmId).getLikes().remove(userId);
+            filmStorage.updateFilmInfo(film);
         }
     }
 
     public List<Film> getTopFilms(Integer count) {
         log.debug("GET 10 популярных кинчиков");
-        return inMemoryFilmStorage.getAllFilms().stream()
+        return filmStorage.getAllFilms().stream()
                 .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(count)
                 .collect(Collectors.toList());
