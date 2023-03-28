@@ -4,8 +4,8 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class User {
@@ -16,11 +16,12 @@ public class User {
             message = "Email должен быть правильным")
     private String email;
     private String name;
-    private Set<Long> friends = new HashSet<>();
+    private Map<Long, Boolean> friends = new HashMap<>();
     @NotBlank(message = "не может быть пуст")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "не должно быть пробелов")
     private String login;
     @NotNull(message = "заполните дату рождения")
     @PastOrPresent(message = "не возможно родиться в будущем")
     private LocalDate birthday;
+    private boolean isConfirmed;
 }

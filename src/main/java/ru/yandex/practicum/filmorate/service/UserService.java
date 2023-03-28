@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.NotFound;
@@ -9,9 +8,7 @@ import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -42,7 +39,7 @@ public class UserService {
         return userStorage.getUserById(id);
     }
 
-    public User addFriends(Long userId, Long friendId) throws NotFound {
+    public User addFriend(long userId, long friendId) throws NotFound {
         final User user = userStorage.getUserById(userId);
         final User friend = userStorage.getUserById(friendId);
         if (friend == null || friend.getId() < 0) {
@@ -50,19 +47,23 @@ public class UserService {
         } else if (user == null || user.getId() < 0) {
             throw new NotFound("нет пользователя с id " + userId);
         } else {
-            user.getFriends().add(friendId);
-            friend.getFriends().add(userId);
+            if (friend.getFriends().containsKey(userId)) {
+                friend.getFriends().put(userId, true);
+                user.getFriends().put(friendId, true);
+            } else {
+                user.getFriends().put(friendId, false);
+            }
             userStorage.updateUser(friend);
             return userStorage.updateUser(user);
         }
     }
 
-    public User deleteFriends(Long userId, Long friendId) throws NotFound {
+    public User deleteFriend(long userId, long friendId) throws NotFound {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
         if (user == null || user.getId() < 0) {
             throw new NotFound("нет пользователя с id " + userId);
-        } else if (friend == null || friend.getId() < 0) {
+        } else if (friend == null || friend.getId() < 0 || !user.isConfirmed()) {
             throw new NotFound("нет пользователя с id " + friendId);
         } else {
             user.getFriends().remove(friendId);
@@ -72,22 +73,24 @@ public class UserService {
         }
     }
 
-    public List<User> getFriendsList(Long userId) throws NotFound {
+    public List<User> getFriendsList(long userId) throws NotFound {
         User user = userStorage.getUserById(userId);
+        List<User> friendsList = new ArrayList<>();
         if (user == null || user.getId() < 0) {
             throw new NotFound("Пользователя с id" + userId + " не существует");
         } else {
-            List<User> friendsList = new ArrayList<>();
             if (user.getFriends() != null) {
-                for (Long id : user.getFriends()) {
-                    friendsList.add(userStorage.getUserById(id));
+                for (Long id : user.getFriends().keySet()) {
+                    if (user.getFriends().get(id)) {
+                        friendsList.add(userStorage.getUserById(id));
+                    }
                 }
             }
-            return friendsList;
         }
+        return friendsList;
     }
 
-    public List<User> getCommonFriendsList(Long mainUser, Long otherUserId) throws NotFound {
+    public List<User> getCommonFriendsList(long mainUser, long otherUserId) throws NotFound {
         List<User> commonFriends = new ArrayList<>();
         User user = userStorage.getUserById(mainUser);
         User otherUser = userStorage.getUserById(otherUserId);
@@ -98,24 +101,18 @@ public class UserService {
             throw new NotFound("нет пользователя с id " + otherUserId);
         } else {
             if (user.getFriends() == null) {
-                if (otherUser.getFriends() == null) {
-                    return List.of();
-                } else {
-                    for (Long id : otherUser.getFriends()) {
+                return List.of();
+            } else if (otherUser.getFriends() == null) {
+                return List.of();
+            } else {
+                for (long id : user.getFriends().keySet()) {
+                    if (otherUser.getFriends().containsKey(id)) {
                         commonFriends.add(userStorage.getUserById(id));
                     }
-                    return commonFriends;
                 }
-            } else {
-                Set<Long> duplicateFriendsUser = new HashSet<>(user.getFriends());
-                duplicateFriendsUser.retainAll(otherUser.getFriends());
-
-                for (Long id : duplicateFriendsUser) {
-                    commonFriends.add(userStorage.getUserById(id));
-                }
-                return commonFriends;
             }
         }
+        return commonFriends;
     }
 }
 

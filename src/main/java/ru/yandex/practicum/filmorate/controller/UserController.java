@@ -46,14 +46,14 @@ public class UserController {
     public User addToFriends(@Valid @PathVariable long userId, @Valid @PathVariable long friendId)
             throws NotFound {
         log.debug("PUT запрос на добавление друга к пользователю id ={} друга id={}", userId, friendId);
-        return userService.addFriends(userId, friendId);
+        return userService.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
     public User deleteFromFriends(@PathVariable long userId, @PathVariable long friendId) throws NotFound {
         log.debug("DELETE запрос на удаление из друзей пользователя с id = {} у пользователя c id = {}",
                 friendId, userId);
-        return userService.deleteFriends(userId, friendId);
+        return userService.deleteFriend(userId, friendId);
     }
 
     @GetMapping("/{userId}/friends")
