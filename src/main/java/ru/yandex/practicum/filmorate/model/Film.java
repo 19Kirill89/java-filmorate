@@ -24,4 +24,6 @@ public class Film {
     private int duration;
     @NotNull
     private LocalDate releaseDate;
+    private Set<Genre> genres;
+    private RatingMpa mpa;
 }
