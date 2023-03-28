@@ -23,5 +23,4 @@ public class User {
     @NotNull(message = "заполните дату рождения")
     @PastOrPresent(message = "не возможно родиться в будущем")
     private LocalDate birthday;
-    private boolean isConfirmed;
 }

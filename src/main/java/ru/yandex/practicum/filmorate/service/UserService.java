@@ -63,7 +63,7 @@ public class UserService {
         User friend = userStorage.getUserById(friendId);
         if (user == null || user.getId() < 0) {
             throw new NotFound("нет пользователя с id " + userId);
-        } else if (friend == null || friend.getId() < 0 || !user.isConfirmed()) {
+        } else if (friend == null || friend.getId() < 0) {
             throw new NotFound("нет пользователя с id " + friendId);
         } else {
             user.getFriends().remove(friendId);
