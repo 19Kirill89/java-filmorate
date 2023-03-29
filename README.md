@@ -1,2 +1,7 @@
-# java-filmorate
-Template repository for Filmorate project.
+# Filmorate
+Backend на java для сервиса по работе с фильмами и оценками пользователей, возможностью получения списка фильмов 
+с наивысшим рейтингом, рекомендованных к просмотру.
+___
+#Блок схема БД.
+![FimorateDB.png](FimorateDB.png)
+___
