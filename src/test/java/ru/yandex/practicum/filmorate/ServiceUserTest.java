@@ -39,8 +39,8 @@ public class ServiceUserTest {
         userService.addUsers(user);
         userService.addUsers(userFriend);
         userService.addUsers(userFriend2);
-        userService.addFriend(user.getId(), userFriend.getId());
-        userService.addFriend(user.getId(), userFriend2.getId());
+        userService.addFriends(user.getId(), userFriend.getId());
+        userService.addFriends(user.getId(), userFriend2.getId());
         long expected = 2;
         Assertions.assertEquals(expected, user.getFriends().size());
     }
@@ -67,8 +67,8 @@ public class ServiceUserTest {
         userService.addUsers(user);
         userService.addUsers(userFriend);
         userService.addUsers(userFriend2);
-        userService.addFriend(user.getId(), userFriend.getId());
-        userService.deleteFriend(user.getId(), userFriend2.getId());
+        userService.addFriends(user.getId(), userFriend.getId());
+        userService.deleteFriends(user.getId(), userFriend2.getId());
         long expected = 1;
         Assertions.assertEquals(expected, user.getFriends().size());
     }
