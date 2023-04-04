@@ -17,7 +17,6 @@ class InMemoryUserStorageTest {
         inMemoryUserStorage = new InMemoryUserStorage();
     }
 
-    // тест updateUser()
     @Test
     public void  errorCheckingIfTheIdIsNotCorrectFromUser() {
         User user2 = User.builder()
@@ -28,8 +27,6 @@ class InMemoryUserStorageTest {
                 .build();
         Assertions.assertThrows(ValidationException.class, () -> inMemoryUserStorage.update(user2));
     }
-
-    // тесты checkUserName()
     @Test
     public void  errorCheckingIfTheIdIsNotCorrectLogin() {
         User user2 = User.builder()

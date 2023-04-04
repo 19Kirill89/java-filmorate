@@ -11,6 +11,6 @@ public class FilmEraValidator implements ConstraintValidator<FilmEra, LocalDate>
         if (localDate == null) {
             return false;
         }
-        return localDate.isAfter(LocalDate.of(1895, Month.DECEMBER, 28));
+        return localDate.isAfter(LocalDate.of(1895, 1, 28));
     }
 }
