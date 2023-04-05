@@ -21,8 +21,8 @@ public class FilmService {
         return genreDbStorage.addFilmGenres(filmStorage.create(film));
     }
 
-    public Film update(Film film) {
-        return genreDbStorage.updateFilmGenres(filmStorage.update(film));
+    public Film updateFilm(Film film) {
+        return genreDbStorage.updateFilmGenres(filmStorage.updateFilm(film));
     }
 
     public Film delete(int filmId) {

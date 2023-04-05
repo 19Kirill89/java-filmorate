@@ -27,6 +27,6 @@ class InMemoryFilmStorageTest {
                 .releaseDate(LocalDate.of(1999, 9, 9))
                 .duration(99)
                 .build();
-        Assertions.assertThrows(ValidationException.class, () -> inMemoryFilmStorage.update(film));
+        Assertions.assertThrows(ValidationException.class, () -> inMemoryFilmStorage.updateFilm(film));
     }
 }

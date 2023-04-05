@@ -31,7 +31,7 @@ public class FilmController {
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         log.info("PUT запрос  на обновление фильма.");
-        return filmService.update(film);
+        return filmService.updateFilm(film);
     }
 
     @DeleteMapping("/{id}")

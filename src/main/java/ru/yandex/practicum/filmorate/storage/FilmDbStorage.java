@@ -30,11 +30,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film update(Film film) {
-        String sqlQueryUpdFilm = "UPDATE film SET name = ?, description = ?, release_date = ?, " +
+    public Film updateFilm(Film film) {
+        String sqlQueryUpdateFilm = "UPDATE film SET name = ?, description = ?, release_date = ?, " +
                 "duration = ?, rating_mpa_id = ? WHERE film_id = ?";
-        int updateResult = jdbcTemplate.update(
-                sqlQueryUpdFilm,
+        int updateResult = jdbcTemplate.update(sqlQueryUpdateFilm,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -47,6 +46,7 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotFoundException(String.format("Фильма с ID:%d нет в базе.", film.getId()));
         }
     }
+
 
     @Override
     public Film delete(Integer filmId) {

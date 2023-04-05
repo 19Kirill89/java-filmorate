@@ -54,7 +54,7 @@ class FilmDbStorageTest {
         filmDbStorage.create(film);
         film.setName("ttt");
         film.setDuration(7);
-        filmDbStorage.update(film);
+        filmDbStorage.updateFilm(film);
         Assertions.assertEquals("ttt", filmDbStorage.getFilm(film.getId()).getName());
         Assertions.assertEquals(7, filmDbStorage.getFilm(film.getId()).getDuration());
     }
