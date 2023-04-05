@@ -28,6 +28,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(simpleJdbcInsert.executeAndReturnKey(filmToMap(film)).intValue());
         return film;
     }
+
     /*
     Error:  /home/runner/work/java-filmorate/java-filmorate/src/main/java/ru/yandex/practicum/filmorate/storage/FilmDbStorage.java:37:17: ',' should be on the previous line. [SeparatorWrapComma]
 Error:  /home/runner/work/java-filmorate/java-filmorate/src/main/java/ru/yandex/practicum/filmorate/storage/FilmDbStorage.java:38:17: ',' should be on the previous line. [SeparatorWrapComma]
@@ -35,24 +36,21 @@ Error:  /home/runner/work/java-filmorate/java-filmorate/src/main/java/ru/yandex/
 Error:  /home/runner/work/java-filmorate/java-filmorate/src/main/java/ru/yandex/practicum/filmorate/storage/FilmDbStorage.java:40:17: ',' should be on the previous line. [SeparatorWrapComma]
 Error:  /home/runner/work/java-filmorate/java-filmorate/src/main/java/ru/yandex/practicum/filmorate/storage/FilmDbStorage.java:41:17: ',' should be on the previous line. [SeparatorWrapComma]
 Error:  /home/runner/work/java-filmorate/java-filmorate/src/main/java/ru/yandex/practicum/filmorate/storage/FilmDbStorage.java:42:17: ',' should be on the previous line. [SeparatorWrapComma]
-Checkstyle ends with 6 errors. и чего хочет сонар я не могу понять..
+Checkstyle ends with 6 errors. и чего хочет сонар я не могу понять
      */
     @Override
     public Film updateFilm(Film film) {
-        String sqlQueryUpdateFilm = "UPDATE film SET name = ?, description = ?, release_date = ?, " +
-                "duration = ?, rating_mpa_id = ? WHERE film_id = ?";
-        int updateResult = jdbcTemplate.update(sqlQueryUpdateFilm
-                ,
-                film.getName()
-                ,
-                film.getDescription()
-                ,
-                film.getReleaseDate()
-                ,
-                film.getDuration()
-                ,
-                film.getMpa().getId()
-                ,
+        String sqlQueryUpdateFilm = "UPDATE film SET name = ?, " +
+                "description = ?, release_date = ?, " +
+                "duration = ?, " +
+                "rating_mpa_id = ? WHERE film_id = ?";
+        int updateResult = jdbcTemplate.update(
+                sqlQueryUpdateFilm,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getMpa().getId(),
                 film.getId());
         if (updateResult > 0) {
             return film;
