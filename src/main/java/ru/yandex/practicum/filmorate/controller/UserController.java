@@ -3,18 +3,17 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.NotFound;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
     private final UserService userService;
 
     @Autowired
@@ -22,50 +21,52 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.allUsers();
-    }
-
     @PostMapping
-    public User addUsers(@Valid @RequestBody User user) {
-        return userService.addUsers(user);
+    public User create(@Valid @RequestBody User user) {
+        log.info("POST запросна добавление нового пользователя.");
+        return userService.create(user);
     }
 
     @PutMapping
-    public User updateInfoOfUser(@Valid @RequestBody User user) {
-        return userService.updateUser(user);
+    public User update(@Valid @RequestBody User user) {
+        log.info("POST запрос на обновление пользователя.");
+        return userService.update(user);
     }
 
-    @GetMapping("/{userId}")
-    public User getById(@PathVariable long userId) throws NotFound {
-        return userService.getUserById(userId);
+    @DeleteMapping("/{id}")
+    public User delete(@PathVariable("id") int userId) {
+        return userService.delete(userId);
     }
 
-    @PutMapping("/{userId}/friends/{friendId}")
-    public User addToFriends(@Valid @PathVariable long userId, @Valid @PathVariable long friendId)
-            throws NotFound {
-        log.debug("PUT запрос на добавление друга к пользователю id ={} друга id={}", userId, friendId);
-        return userService.addFriends(userId, friendId);
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") int userId) {
+        return userService.getUser(userId);
     }
 
-    @DeleteMapping("/{userId}/friends/{friendId}")
-    public User deleteFromFriends(@PathVariable long userId, @PathVariable long friendId) throws NotFound {
-        log.debug("DELETE запрос на удаление из друзей пользователя с id = {} у пользователя c id = {}",
-                friendId, userId);
-        return userService.deleteFriends(userId, friendId);
+    @GetMapping
+    public Collection<User> getUsers() {
+        log.info("GET запрос на получение всех пользователей.");
+        return userService.getUsers();
     }
 
-    @GetMapping("/{userId}/friends")
-    public List<User> getFriendsForUser(@PathVariable long userId) throws NotFound {
-        log.debug("GET запрос на получение списка дружков");
-        return userService.getFriendsList(userId);
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable("id") int userId, @PathVariable("friendId") int friendId) {
+        return userService.addFriend(userId, friendId);
     }
 
-    @GetMapping("/{userId}/friends/common/{otherUserId}")
-    public List<User> getCommonFriends(@PathVariable long userId, @PathVariable long otherUserId)
-            throws NotFound {
-        log.debug("GET запрос на получение списка дружков которые друзья пользователя");
-        return userService.getCommonFriendsList(userId, otherUserId);
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable("id") int userId, @PathVariable("friendId") int friendId) {
+        return userService.deleteFriend(userId, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable("id") int userId) {
+        return userService.getFriends(userId);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable("id") int userId,
+                                       @PathVariable("otherId") int otherUserId) {
+        return userService.getCommonFriends(userId, otherUserId);
     }
 }
