@@ -40,18 +40,8 @@ Checkstyle ends with 6 errors. и чего хочет сонар я не мог�
      */
     @Override
     public Film updateFilm(Film film) {
-        String sqlQueryUpdateFilm = "UPDATE film SET name = ?, " +
-                "description = ?, release_date = ?, " +
-                "duration = ?, " +
-                "rating_mpa_id = ? WHERE film_id = ?";
-        int updateResult = jdbcTemplate.update(
-                sqlQueryUpdateFilm,
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
-                film.getMpa().getId(),
-                film.getId());
+        String sqlQueryUpdateFilm = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, rating_mpa_id = ? WHERE film_id = ?";
+        int updateResult = jdbcTemplate.update(sqlQueryUpdateFilm, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
         if (updateResult > 0) {
             return film;
         } else {
